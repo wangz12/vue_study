@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="text" @keyup="aaa" v-model:value="msg">
+    </div>
+    <script>
+        var vm=new Vue({
+            el: '#app',
+            data: {
+                msg:"w"
+            },
+            methods:{
+                aaa:function(){
+                    console.log(this);
+                    console.log(vm.$data);
+                    
+                    
+                }
+            },
+        })
+    </script>
+</body>
+</html>

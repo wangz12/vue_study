@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <p v-text="msg"></p>
+        <button @click='aaa'>点击</button>
+        <button @click='bbb'>停止</button>
+    </div>
+    <script>
+    
+    new Vue({
+        el:'#app',
+        data:{
+            msg:'这是做跑马灯的一串字符串',
+            timeId:''
+        },
+        methods:{
+            aaa () {
+                clearInterval(this.timeId);
+                this.timeId=setInterval(()=>{
+                    var start=this.msg.substr(0,1);   //substr(开始索引,截取多少个)   ,   substring(开始索引,结束索引) 
+                    var end = this.msg.substr(1);
+                    this.msg=end+start;
+                },400);
+                
+            },
+            bbb () {
+                clearInterval(this.timeId)
+            }
+        }
+    })
+    
+    </script>
+</body>
+</html>
