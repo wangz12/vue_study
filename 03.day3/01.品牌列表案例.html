@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./lib/vue-2.4.0.js"></script>
+  <link rel="stylesheet" href="./lib/bootstrap-3.3.7.css">
+</head>
+
+<body>
+  <div id="app">
+
+
+
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">添加品牌</h3>
+      </div>
+      <div class="panel-body form-inline">
+        <label>
+          Id:
+          <input type="text" class="form-control" v-model="id">
+        </label>
+
+        <label>
+          Name:
+          <input type="text" class="form-control" v-model="name">
+        </label>
+
+        <!-- 在Vue中，使用事件绑定机制，为元素指定处理函数的时候，如果加了小括号，就可以给函数传参了 -->
+        <input type="button" value="添加" class="btn btn-primary" @click="add">
+
+        <label>
+          搜索名称关键字：
+          <input type="text" class="form-control" v-model="keywords">
+        </label>
+      </div>
+    </div>
+
+
+
+    <table class="table table-bordered table-hover table-striped">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Ctime</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 之前， v-for 中的数据，都是直接从 data 上的list中直接渲染过来的 -->
+        <!-- 现在， 我们自定义了一个 search 方法，同时，把 所有的关键字，通过传参的形式，传递给了 search 方法 -->
+        <!-- 在 search 方法内部，通过 执行 for 循环， 把所有符合 搜索关键字的数据，保存到 一个新数组中，返回 -->
+        <tr v-for="item in search(keywords)" :key="item.id">
+          <td>{{item.id}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.ctime}}</td>
+          <td>
+            <a href="" @click.prevent="del(item.id)">删除</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+  </div>
+
+  <script>
+    
+    new Vue({
+      el:'#app',
+      data:{
+        id:'',
+        name:'',
+        keywords:'',
+        list: [
+          { id: 1, name: '奔驰', ctime: new Date() },
+          { id: 2, name: '宝马', ctime: new Date() }
+        ]
+      },
+      methods: {
+        add () {
+          this.list.push( { id:this.id,name:this.name,ctime:new Date() } );
+          this.id='';
+          this.name='';
+        },
+        del(id) {
+          // console.log(id,"id");
+          
+          //遍历数组,通过传过来的id找到相对应的数据
+          this.list.some((item,index)=>{
+            // console.log(item.id,"item.id");
+            //表单输入的都是字符串
+            
+            if(item.id == id){
+              this.list.splice(index,1)
+              return true;
+            }
+          })
+        },
+        search(keywords){
+          //filter 为数组中的每个元素调用一次 callback 函数，并利用所有使得 callback 返回 true 或 等价于 true 的值 的元素创建一个新数组。
+          //那些没有通过 callback 测试的元素会被跳过，不会被包含在新数组中。filter 不会改变原数组。
+          return this.list.filter(item=>{
+            if(item.name.includes(keywords)){
+              return true;
+            }
+          })
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>

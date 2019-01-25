@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="app">
+        <com1 ref="aaa"></com1>
+        <h2 @click="myclick" ref="qqq">这是父组件----{{b}}</h2>
+    </div>
+
+    <template id="tmp">
+        <div>
+            <h1>这是子组件</h1>
+        </div>
+    </template>
+
+    <script>
+    var com1={
+        template:"#tmp",
+        data (){
+            return {
+                a:1
+            }
+        }
+    }
+
+    new Vue({
+        el:'#app',
+        data:{
+            b:2
+        },
+        methods:{
+            myclick () {
+                console.log(this.$refs.aaa.a);
+                
+            }
+        },
+        components:{
+            com1
+        }
+    })
+    
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+    <link rel="stylesheet" href="./lib/animate.css">
+    <style>
+        #app{
+            padding-left: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <input type="button" @click="flag=!flag" value="按钮">
+        <transition
+        enter-active-class="zoomIn animated"
+        leave-active-class="zoomOut animated"
+        :duration="{enter:600,leave:800}">
+            <p v-if="flag">这是一段测试代码</p>
+        </transition>
+    </div>
+
+    <script>
+    
+    new Vue({
+        el:"#app",
+        data:{
+            flag:false
+        }
+    })
+    
+    
+    </script>
+</body>
+</html>

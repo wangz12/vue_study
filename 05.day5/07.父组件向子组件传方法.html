@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="app">
+        <com1 @func="hh"></com1>
+        {{b}}
+    </div>
+
+    <template id="tmp1">
+        <div>
+            <h1 @click="postvalue">这是子组件-----{{a}}</h1>
+        </div>
+    </template>
+
+    <script>
+    
+    var com1={
+        template:'#tmp1',
+        data () {
+            return {
+                a:1
+            }
+        },
+        methods:{
+            postvalue () {
+                this.$emit("func",this.a)
+            }
+        }
+    }
+
+    new Vue({
+        el:"#app",
+        data:{
+            b:2
+        },
+        methods:{
+            hh (data) {
+                console.log(13243534);
+                this.b=data
+            }
+        },
+        components:{
+            com1
+        }
+    })
+    
+    
+    </script>
+</body>
+</html>

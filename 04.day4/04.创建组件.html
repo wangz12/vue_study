@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="app">
+        <com1></com1>
+    </div>
+
+    <div id="app2">
+        <com2></com2>
+    </div>
+    
+    <!-- 全局的组件模板 -->
+    <template id="tmp1">
+        <div>
+            <h1>这是第一个全局的组件模板</h1>
+        </div>
+    </template>
+
+    <!-- 私有模板 -->
+    <template id="tmp2">
+            <div>
+                <h2>这是第一个私有的组件模板</h2>
+            </div>
+        </template>
+
+    <script>
+
+    Vue.component("com1",{
+        template:"#tmp1"
+    })
+    
+    new Vue({
+        el:'#app'
+    })
+
+    new Vue({
+        el:'#app2',
+        components:{
+            com2:{
+                template:"#tmp2"
+            }
+        }
+    })
+    
+    </script>
+</body>
+</html>

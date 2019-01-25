@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./lib/vue-2.4.0.js"></script>
+  <link rel="stylesheet" href="./lib/bootstrap-3.3.7.css">
+  <script src="./lib/moment.js"></script>
+</head>
+
+<body>
+  <div id="app">
+
+
+
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">添加品牌</h3>
+      </div>
+      <div class="panel-body form-inline">
+        <label>
+          Id:
+          <input type="text" class="form-control" v-model="id">
+        </label>
+
+        <label>
+          Name:
+          <input type="text" class="form-control" v-model="name" @keyup.f2="add" v-fc="'blue'">
+        </label>
+
+        <!-- 在Vue中，使用事件绑定机制，为元素指定处理函数的时候，如果加了小括号，就可以给函数传参了 -->
+        <input type="button" value="添加" class="btn btn-primary" @click="add">
+
+        <label>
+          搜索名称关键字：
+          <input type="text" class="form-control" v-model="keywords" v-focus_color>
+        </label>
+      </div>
+    </div>
+
+
+
+    <table class="table table-bordered table-hover table-striped">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Ctime</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 之前， v-for 中的数据，都是直接从 data 上的list中直接渲染过来的 -->
+        <!-- 现在， 我们自定义了一个 search 方法，同时，把 所有的关键字，通过传参的形式，传递给了 search 方法 -->
+        <!-- 在 search 方法内部，通过 执行 for 循环， 把所有符合 搜索关键字的数据，保存到 一个新数组中，返回 -->
+        <tr v-for="item in search(keywords)" :key="item.id">
+          <td>{{item.id}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.ctime | filterFormat() }}</td>
+          <td>
+            <a href="" @click.prevent="del(item.id)">删除</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+  </div>
+
+  <div id="app2" v-col="'green'" v-fontsize="50">
+    {{shijian | filterFormat() }}
+
+  </div>
+
+  <script>
+
+    //定义全局过滤器(函数里第一个参数是管道符左边数据,第二个参数是管道符右边数据)
+    Vue.filter('filterFormat',function(datastr,pattern=''){
+      return moment(datastr).format('YYYY MM DD HH:mm:ss');
+    })
+
+    //键盘修饰符,在输入完name后直接键盘敲击回车就相当于点击add按钮
+    Vue.config.keyCodes.f2=113;
+
+    //自定义指令
+    Vue.directive('focus_color',{
+      bind (el) {  //只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置
+              //// 样式，只要通过指令绑定给了元素，不管这个元素有没有被插入到页面中去，这个元素肯定有了一个内联的样式
+              // 将来元素肯定会显示到页面中，这时候，浏览器的渲染引擎必然会解析样式，应用给这个元素
+        el.style.color='red';
+
+      },
+      inserted (el) {  //被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。
+        el.focus();  //方法必须写在这里,不能写在bind,,因为bind的时候还没有元素节点,但是样式可以写在bind里面,因为在被渲染时,样式也会被解析
+      },
+      update() {
+      },
+    })
+
+    //自定义指令可以接两个参数
+    Vue.directive('fc',{
+      bind (el,binding) {   //具体用法参考Vue.js官网
+        el.style.color=binding.value;
+      }
+    })
+    
+    new Vue({
+      el:'#app',
+      data:{
+        id:'',
+        name:'',
+        keywords:'',
+        list: [
+          { id: 1, name: '奔驰', ctime: new Date() },
+          { id: 2, name: '宝马', ctime: new Date() }
+        ]
+      },
+      methods: {
+        add () {
+          this.list.push( { id:this.id,name:this.name,ctime:new Date() } );
+          this.id='';
+          this.name='';
+        },
+        del(id) {
+          // console.log(id,"id");
+          
+          //遍历数组,通过传过来的id找到相对应的数据
+          this.list.some((item,index)=>{
+            // console.log(item.id,"item.id");
+            //表单输入的都是字符串
+            
+            if(item.id == id){
+              this.list.splice(index,1)
+              return true;
+            }
+          })
+        },
+        search(keywords){
+          //filter 为数组中的每个元素调用一次 callback 函数，并利用所有使得 callback 返回 true 或 等价于 true 的值 的元素创建一个新数组。
+          //那些没有通过 callback 测试的元素会被跳过，不会被包含在新数组中。filter 不会改变原数组。
+          return this.list.filter(item=>{
+            if(item.name.includes(keywords)){
+              return true;
+            }
+          })
+        }
+      }
+    })
+
+
+    //第二个Vue实例
+    new Vue({
+      el:'#app2',
+      data:{shijian:new Date()},
+      methods:{},
+      filters:{
+        filterFormat (dataStr,pattern='') {
+          // return moment(dataStr).format('YYYY MM DD HH:mm:ss');
+          return moment(dataStr).format('MMMM Do YYYY, h:mm:ss a');
+        }
+      },
+      directives:{
+        "col":{
+          bind (el,binding) {
+            el.style.color=binding.value;
+          }
+        },
+        "fontsize":  function(el,binding) {   //这种简写方法相当于在bind和update中执行下面代码
+          el.style.fontSize=parseInt(binding.value) + "px";
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>

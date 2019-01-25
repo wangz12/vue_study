@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <style>
+        .red{
+            color: red;
+        }
+        .big{
+            font-weight: 700;
+        }
+        .bgc{
+            background-color: blue;
+        }
+    
+    </style>
+</head>
+<body>
+    <!-- <p id="pp" :class="['red','big','bgc']">这是一段文字</p> -->
+    <!-- <p id="pp" :class="['red','big',{bgc:flag}]">这是一段文字</p> -->
+    <p id="pp" :class="obj">这是一段文字</p>
+    <script>
+    
+        new Vue({
+            el:'#pp',
+            data:{
+                flag:true,
+                obj:{red:true,big:true,bgc:true}
+            }
+        })
+    
+    </script>
+</body>
+</html>

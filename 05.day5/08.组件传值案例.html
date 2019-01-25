@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+    <link rel="stylesheet" href="./lib/bootstrap-3.3.7.css">
+</head>
+<body>
+    <div id="app">
+        <com1 @func="getit"></com1>
+        <ul class="list-group">
+            <li class="list-group-item" v-for="item in list" :key="item.id">
+                <span class="badge">{{item.user}}</span>
+                {{item.content}}
+            </li>
+        </ul>
+    </div>
+
+    <template id="tmp1">
+        <div>
+            <div class="form-group">
+                <label for="">
+                    评论人:
+                </label>
+                <input type="text" class="form-control" v-model="user">
+            </div>
+            <div class="form-group">
+                <label for="">
+                    评论内容:
+                </label>
+                <textarea type="text" class="form-control" v-model="content"></textarea>
+            </div>
+            <input type="button" value="发表评论" class="btn btn-primary" @click="postcomment">
+        </div>
+    </template>
+
+    <script>
+    
+    var com1={
+        template:"#tmp1",
+        data (){
+            return {
+                user:'',
+                content:''
+            }
+        },
+        methods:{
+            postcomment(){   //点击发表评论按钮发表评论,存在localStorage
+                var comment=JSON.parse(localStorage.getItem("shuju") || "[]")
+                comment.unshift({id:Date.now(),user:this.user,content:this.content})
+                localStorage.setItem("shuju",JSON.stringify(comment))
+                this.user=this.content=''
+                this.$emit("func")
+            }
+        }
+    }
+
+    new Vue({
+        el:"#app",
+        data:{
+            list:[
+                {id:Date.now(),user:"小白",content:"这是一条思数据"}
+            ]
+        },
+        methods:{
+            getit () {
+                this.list=JSON.parse(localStorage.getItem("shuju"))
+            }
+        },
+        created (){
+            this.getit()
+        },
+        components:{
+            com1
+        }
+    })
+    
+    
+    
+    </script>
+</body>
+</html>

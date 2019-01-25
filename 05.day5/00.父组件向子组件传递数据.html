@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+</head>
+<body>
+    <div id="app">
+        <com1 :fromparent="a"></com1>
+    </div>
+
+    <template id="tmpl">
+        <div>
+            <h1>这是子组件里内容-----------{{b}}------{{fromparent}}</h1>
+        </div>
+    </template>
+
+    <script>
+        var com1={
+            template:"#tmpl",
+            data () {
+                return {
+                    b:2
+                }
+            },
+            props:['fromparent']
+        }
+    
+    //父组件
+    new Vue({
+        el:"#app",
+        data:{
+            a:1
+        },
+        methods:{},
+        components:{
+            com1
+        }
+    })
+    
+    </script>
+</body>
+</html>

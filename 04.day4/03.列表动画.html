@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/vue-2.4.0.js"></script>
+    <style>
+        li{
+            width: 300px;
+            height: 30px;
+            line-height: 30px;
+            margin: 10px;
+            padding-left: 10px;
+            border:1px solid red
+        }
+        li:hover{
+            background-color: blue;
+        }
+        .v-enter,
+        .v-leave-to{
+            opacity: 0;
+            transform:translateY(100px)
+        }
+        .v-enter-active,
+        .v-leave-active{
+            transition: all 1s ease
+        }
+
+        .v-move{
+            transition: all 1s ease
+        }
+        .v-leave-active{
+            position: absolute
+        }
+    
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div>
+            <label>
+                ID:
+                <input type="text" v-model="id">
+            </label>
+
+            <label>
+                Name:
+                <input type="text" v-model="name" @keyup.enter="add">
+            </label>
+            <input type="button" value="添加" @click="add">
+        </div>
+
+        <transition-group tag="ul" appear>
+            <li v-for=" (item,index) in getAllProducts " :key="item.id" @click="del(index)">
+                {{item.id}}~~~~~~~~~~~~~~~~~{{item.name}}
+            </li>
+        </transition-group>
+    </div>
+    
+    <script>
+    
+    new Vue({
+        el:'#app',
+        data:{
+            id:'',
+            name:'',
+            getAllProducts:[
+                {id:1,name:"哈哈"},
+                {id:2,name:"呵呵"},
+                {id:3,name:"嘿嘿"},
+                {id:4,name:"哼哼"},
+            ]
+        },
+        methods:{
+            add () {
+                if(this.id.trim()=='' || this.name.trim()=='') return alert("请输入表单值")
+                this.getAllProducts.push({id:this.id,name:this.name})
+                this.id=this.name=''
+            },
+            del (index) {
+                this.getAllProducts.splice(index,1)
+            }
+        }
+    })
+    
+    </script>
+</body>
+</html>
