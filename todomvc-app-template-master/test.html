@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Template • TodoMVC</title>
+		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+		<!-- CSS overrides - remove if you don't need it -->
+		<link rel="stylesheet" href="css/app.css">
+		<script src="./lib/vue-2.4.0.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<section class="todoapp">
+				<!-- 搜索框 -->
+				<header class="header">
+					<h1>todos</h1>
+					<input class="new-todo" placeholder="What needs to be done?" autofocus  @keyup.enter="add" v-model="shuju">
+				</header>
+				<!-- 列表项 -->
+				<section class="main" v-show="list.length">
+					<input id="toggle-all" class="toggle-all" type="checkbox" v-model="alldone" @click="bigcheck">
+					<label for="toggle-all">Mark all as complete</label>
+					<ul class="todo-list">
+						<!-- <li class="completed">
+							<div class="view">
+								<input class="toggle" type="checkbox" checked>
+								<label>Taste JavaScript</label>
+								<button class="destroy"></button>
+							</div>
+							<input class="edit" value="Create a TodoMVC template">
+						</li>
+						<li>
+							<div class="view">
+								<input class="toggle" type="checkbox">
+								<label>Buy a unicorn</label>
+								<button class="destroy"></button>
+							</div>
+							<input class="edit" value="Rule the web">
+						</li> -->
+						<li v-for="(item,index) in getproducts(arg)" :key="item.id" :class="['todo', item.isdone ? 'completed' : '',item.edit ? 'editing' :'']">
+							<div class="view">
+								<input class="toggle" type="checkbox" v-model="item.isdone" @click="smallcheck">
+								<label @dblclick="editList(index)">{{item.name}}</label>
+								<button class="destroy" @click="del(index)"></button>
+							</div>
+							<input class="edit" type="text" v-focus  v-model="item.name"  @blur="doneEdit(index)" @keyup.enter="doneEdit(index)" @keyup.esc="cancelEdit(index)">
+						</li>
+					</ul>
+				</section>
+				<!-- 底部功能 -->
+				<footer class="footer" v-show="list.length">
+					<!-- This should be `0 items left` by default -->
+					<span class="todo-count"><strong>{{itemleft()}}</strong> item left</span>
+					<!-- Remove this if you don't implement routing -->
+					<ul class="filters">
+						<li>
+							<a :class="all ? 'selected' : ''" href="#/" @click.stop.prevent="getAllproducts">All</a>
+						</li>
+						<li>
+							<a :class="active ? 'selected' : ''" href="#/active" @click.stop.prevent="getNodone">Active</a>
+						</li>
+						<li>
+							<a :class="completed ? 'selected' : ''" href="#/completed" @click.stop.prevent="getIsdone">Completed</a>
+						</li>
+					</ul>
+					<!-- Hidden if no completed items are left ↓ -->
+					<button class="clear-completed" @click="clearcompleted" v-show="judgecompleted()">Clear completed</button>
+				</footer>
+			</section>
+		</div>
+		
+		<script src="node_modules/todomvc-common/base.js"></script>
+		<script src="js/app.js"></script>
+
+		<script>
+
+		//定义全局指令
+		Vue.directive("focus",{
+			update:function(el){
+					el.focus();
+			}
+		})
+		
+		new Vue({
+			el:'#app',
+			data:{
+				arg:'All',
+				quxiao:'',
+				shuju:'',
+				all:true,
+				active:false,
+				completed:false,
+				alldone:false,
+				list:[
+					// {id:1,name:"大白菜",isdone:true,edit:false},
+					// {id:2,name:"胡萝卜",isdone:false,edit:false},
+					// {id:3,name:"土豆",isdone:true,edit:false},
+				],
+			},
+			created() {
+				this.list = JSON.parse(localStorage.getItem('cmts') || '[]')
+			},
+			updated() {
+				localStorage.setItem('cmts', JSON.stringify(this.list))
+			},
+			methods:{
+				//添加数据方法
+				add () {
+					if(this.shuju.trim()=='')	return console.log("请输入值");
+					// if(this.list.length==0){
+					// 	this.list.length=1;
+					// 	this.list[0].id=0;
+					// }
+					// this.list.push({id:this.list[this.list.length-1].id+1,name:this.shuju,isdone:false})
+					this.list.push({id:this.list.length+1,name:this.shuju,isdone:false,edit:false})
+					this.shuju=''
+				},
+				//删除数据方法
+				del (index) {
+					this.list.splice(index,1)
+				},
+				//双击编辑操作
+				editList (index) {
+					// console.log(123);
+					this.quxiao=this.list[index].name
+					this.list[index].edit=true;
+
+					// console.log(this.$refs.aaa[index]);
+					// var bbb=this.$refs.aaa[index]
+					// // console.log(bbb);
+					// setTimeout(function(){
+					// 	bbb.focus()
+					// },50)
+				},
+				//失去焦点 或者 点击回车 后操作方法
+				doneEdit (index) {
+					this.list[index].edit=false
+				},
+				//取消编辑操作
+				cancelEdit (index) {
+					this.list[index].name=this.quxiao;
+					this.quxiao=''
+					this.list[index].edit=false;
+				},
+				//获取数据的方法
+				getproducts (arg) {
+					//这里判断是获取全部数据,还是获取已完成的数据,还是未完成的数据<<<<<<可以通过传入的实参判断
+					if(arg=="All"){		//默认页面已加载获取全部数据
+						// console.log(123345);
+						// console.log(this.list);
+						return this.list;
+					} else if(arg=="Active"){   //获取没有完成的项
+						return this.list.filter(item => {
+							if (item.isdone == false ){
+							return item
+							}
+						})
+					} else if(arg=="Completed"){
+						return this.list.filter(item => {
+							if (item.isdone == true ){
+							return item
+							}
+						})
+					}
+				},
+				getAllproducts () {   //点击All按钮获取所有数据
+					this.arg="All"
+					this.active=this.completed=false
+					this.all=true
+				},
+				getNodone () {   //点击Active按钮获取没有完成的项
+					this.arg="Active"
+					this.all=this.completed=false
+					this.active=true
+				},
+				getIsdone () {   //点击Completed按钮获取已经完成的项
+					this.arg="Completed"
+					this.all=this.active=false
+					this.completed=true
+				},
+				itemleft () {   //剩余几条选项没有完成
+					var count=0;
+					for(var i=0;i<this.list.length;i++){
+						if(this.list[i].isdone==false){
+							count++;
+						}
+					}
+					return count;
+				},
+				clearcompleted () {  //删除已经完成的项
+					// for(var i=0;i<this.list.length;i++){
+					// 	if(this.list[i].isdone==true){
+					// 		this.list.splice(i,1)
+					// 	}
+					// }
+
+					// this.list.map((item,index)=>{
+					// 	if(item.isdone==true){
+					// 		this.list.splice(index,1)
+					// 	}
+					// })
+
+					this.list=this.list.filter(item=>{
+						if(item.isdone==false){
+							return item
+						}
+					})
+					
+				},
+				bigcheck () {   //给全选按钮添加的点击事件
+					// console.log(12344);
+					// console.log(this.alldone);
+					// console.log(this.alldone);
+					for(var i=0;i<this.list.length;i++){
+						this.list[i].isdone=this.alldone
+					}
+				},
+				smallcheck () {   //给下面所有复选框加的事件
+					var flag=true;
+					for(var i=0;i<this.list.length;i++){
+						if(this.list[i].isdone==false){
+							flag=false
+						}
+					}
+					this.alldone=flag
+				},
+				judgecompleted () {   //判断clear completed 的显示与隐藏
+					var flag=false
+					for(var i=0;i<this.list.length;i++){
+						if(this.list[i].isdone==true){
+							flag=true
+						}
+					}
+					return flag
+				}
+			},
+		})
+		
+		</script>
+	</body>
+</html>
